@@ -1,0 +1,6 @@
+# Unit economics of the retention campaign.
+# EV(call) = P * retention_prob * value_retained - contact_cost
+# => calling is profitable when P > contact_cost / (retention_prob * value_retained)
+value_retained: 5000 # V: 12-month margin from a retained customer, RUB
+contact_cost: 1000 # C: cost of one call + discount offer, spent on EVERY contacted customer, RUB
+retention_prob: 0.30 # p: conversion among customers who were really about to leave

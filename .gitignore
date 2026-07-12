@@ -1,0 +1,47 @@
+# --- personal / local ---
+ML-Portfolio-Plan.md
+.claude/
+.vscode/
+.idea/
+
+# --- python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.python-version.local
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# --- data & artifacts (tracked by DVC / MLflow, never by git) ---
+data/**
+!data/**/
+!data/**/*.dvc
+!data/**/.gitignore
+*.csv
+*.parquet
+*.pkl
+*.joblib
+*.onnx
+*.xlsx
+models/
+mlruns/
+mlartifacts/
+optuna.db
+
+# --- generated reports (figures are committed, heavy HTML is not) ---
+reports/drift/*.html
+reports/latency_raw.json
+predictions.jsonl
+predictions.db
+
+# --- notebooks ---
+.ipynb_checkpoints/
+
+# --- os ---
+.DS_Store
+Thumbs.db

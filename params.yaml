@@ -1,0 +1,21 @@
+data:
+  raw_path: data/raw/Telco_customer_churn.xlsx
+  interim_path: data/interim/telco_clean.parquet
+  processed_dir: data/processed
+  valid_size: 0.2
+  test_size: 0.2
+  random_state: 42
+
+train:
+  model_dir: models
+  optuna_trials: 40
+  cv_folds: 5
+  random_state: 42
+  lightgbm_base:
+    objective: binary
+    n_estimators: 600
+    learning_rate: 0.03
+    verbosity: -1
+
+evaluate:
+  reports_dir: reports
