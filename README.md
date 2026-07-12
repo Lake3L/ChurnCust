@@ -2,7 +2,7 @@
 
 > Сервис скоринга оттока, который решает не «кто уйдёт», а **«кому звонить, чтобы заработать»**: откалиброванные вероятности + порог решения, выведенный из unit-экономики, в полном производственном контуре (DVC → MLflow → FastAPI → Docker → мониторинг дрифта).
 
-[![CI](https://github.com/Lake3L/churn-scoring-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/Lake3L/churn-scoring-platform/actions/workflows/ci.yml)
+[![CI](https://github.com/Lake3L/ChurnCust/actions/workflows/ci.yml/badge.svg)](https://github.com/Lake3L/ChurnCust/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.11-blue)
 ![Coverage](https://img.shields.io/badge/coverage-74%25-brightgreen)
 
@@ -93,8 +93,8 @@ flowchart LR
 Нужны: [uv](https://docs.astral.sh/uv/), Docker (опционально — для полного стека). Датасет: скачать xlsx по ссылке выше в `data/raw/Telco_customer_churn.xlsx` (DVC сверит хеш).
 
 ```bash
-git clone https://github.com/Lake3L/churn-scoring-platform.git
-cd churn-scoring-platform
+git clone https://github.com/Lake3L/ChurnCust.git
+cd ChurnCust
 make install        # uv sync + pre-commit хуки
 make repro          # dvc repro: данные -> модель -> отчёты (~2 мин)
 make test           # 28 тестов, coverage ~74%
