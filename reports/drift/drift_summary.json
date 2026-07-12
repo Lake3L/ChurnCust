@@ -1,0 +1,62 @@
+[
+  {
+    "scenario": "no_drift",
+    "n_features": 27,
+    "n_drifted": 0,
+    "share_drifted": 0.0,
+    "dataset_drift": false,
+    "max_psi_feature": "total_charges",
+    "max_psi": 0.021,
+    "n_psi_alerts": 0,
+    "proba_psi": 0.001,
+    "proba_psi_alert": false,
+    "pr_auc": 0.671,
+    "roc_auc": 0.856,
+    "profit": 24500.0
+  },
+  {
+    "scenario": "covariate",
+    "n_features": 27,
+    "n_drifted": 3,
+    "share_drifted": 0.111,
+    "dataset_drift": false,
+    "max_psi_feature": "charge_diff",
+    "max_psi": 9.314,
+    "n_psi_alerts": 3,
+    "proba_psi": 0.018,
+    "proba_psi_alert": false,
+    "pr_auc": 0.664,
+    "roc_auc": 0.854,
+    "profit": 25500.0
+  },
+  {
+    "scenario": "prior",
+    "n_features": 27,
+    "n_drifted": 4,
+    "share_drifted": 0.148,
+    "dataset_drift": false,
+    "max_psi_feature": "avg_service_cost",
+    "max_psi": 0.055,
+    "n_psi_alerts": 0,
+    "proba_psi": 0.047,
+    "proba_psi_alert": false,
+    "pr_auc": 0.804,
+    "roc_auc": 0.864,
+    "profit": 75500.0
+  },
+  {
+    "scenario": "concept",
+    "n_features": 27,
+    "n_drifted": 0,
+    "share_drifted": 0.0,
+    "dataset_drift": false,
+    "max_psi_feature": "total_charges",
+    "max_psi": 0.021,
+    "n_psi_alerts": 0,
+    "proba_psi": 0.001,
+    "proba_psi_alert": false,
+    "pr_auc": 0.498,
+    "roc_auc": 0.614,
+    "profit": -8500.0
+  }
+]

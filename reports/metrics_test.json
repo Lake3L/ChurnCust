@@ -1,0 +1,16 @@
+{
+  "split": "test",
+  "n_customers": 1409,
+  "pr_auc": 0.6713940062358039,
+  "roc_auc": 0.8558888113875327,
+  "brier": 0.1324137168254212,
+  "brier_uncalibrated": 0.13219170583620513,
+  "threshold_theoretical": 0.6666666666666666,
+  "threshold_empirical_best": 0.66,
+  "profit_at_theoretical_threshold": 24500.0,
+  "profit_at_05": 2500.0,
+  "profit_empirical_best": 26000.0,
+  "profit_call_everyone": -848000.0,
+  "profit_call_nobody": 0.0,
+  "n_calls_at_threshold": 115
+}

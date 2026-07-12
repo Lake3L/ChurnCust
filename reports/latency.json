@@ -1,0 +1,17 @@
+{
+  "endpoint_single": {
+    "p50_ms": 65.44,
+    "p95_ms": 73.79,
+    "p99_ms": 77.37,
+    "mean_ms": 64.95,
+    "n": 300
+  },
+  "endpoint_batch32": {
+    "p50_ms": 86.54,
+    "p95_ms": 91.86,
+    "p99_ms": 98.42,
+    "mean_ms": 85.37,
+    "n": 50
+  },
+  "model_version": "lightgbm-v1"
+}
