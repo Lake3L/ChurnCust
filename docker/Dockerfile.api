@@ -1,0 +1,34 @@
+# Multi-stage build: uv resolves the serving-only dependency set from uv.lock,
+# the runtime stage gets a clean python:slim with the venv and nothing else.
+# The model artifact is NOT baked in — it is mounted at runtime (see compose),
+# so the image is model-version-agnostic.
+
+FROM ghcr.io/astral-sh/uv:python3.11-bookworm-slim AS builder
+ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
+WORKDIR /app
+COPY pyproject.toml uv.lock README.md ./
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-default-groups --no-install-project
+COPY src ./src
+COPY app ./app
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-default-groups
+
+FROM python:3.11-slim-bookworm
+# libgomp1: LightGBM links against OpenMP at import time; slim images do not ship it
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+RUN groupadd -g 1000 appuser && useradd -m -u 1000 -g appuser appuser
+WORKDIR /app
+COPY --from=builder --chown=appuser:appuser /app/.venv ./.venv
+COPY --chown=appuser:appuser src ./src
+COPY --chown=appuser:appuser app ./app
+COPY --chown=appuser:appuser config ./config
+ENV PATH="/app/.venv/bin:$PATH" \
+    PYTHONUNBUFFERED=1
+USER appuser
+EXPOSE 8000
+HEALTHCHECK --interval=30s --timeout=3s --start-period=15s --retries=3 CMD \
+    python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2).status==200 else 1)"
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

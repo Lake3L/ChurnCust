@@ -1,0 +1,56 @@
+name: churn-scoring-platform
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: churn
+      POSTGRES_PASSWORD: churn
+      POSTGRES_DB: churn
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U churn"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.22.0
+    command: mlflow server --backend-store-uri /mlruns --host 0.0.0.0 --port 5000
+    ports:
+      - "5000:5000"
+    volumes:
+      - ../mlruns:/mlruns
+
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg2://churn:churn@postgres:5432/churn
+    volumes:
+      # model artifacts come from `dvc repro` on the host — the image stays model-agnostic
+      - ../models:/app/models:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  dashboard:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.streamlit
+    ports:
+      - "8501:8501"
+    environment:
+      API_URL: http://api:8000
+      DATABASE_URL: postgresql+psycopg2://churn:churn@postgres:5432/churn
+    volumes:
+      - ../reports:/app/reports:ro
+    depends_on:
+      - api
+
+volumes:
+  pgdata:

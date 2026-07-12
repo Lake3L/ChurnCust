@@ -1,0 +1,14 @@
+# Lightweight dashboard image: streamlit + clients only, no ML stack.
+FROM python:3.11-slim-bookworm
+RUN pip install --no-cache-dir \
+    "streamlit>=1.59,<2" \
+    "requests>=2.32" \
+    "pandas>=2.2,<3" \
+    "sqlalchemy>=2.0" \
+    "psycopg2-binary>=2.9"
+RUN groupadd -g 1000 appuser && useradd -m -u 1000 -g appuser appuser
+WORKDIR /app
+COPY --chown=appuser:appuser app/dashboard.py ./app/dashboard.py
+USER appuser
+EXPOSE 8501
+CMD ["streamlit", "run", "app/dashboard.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.headless=true"]
