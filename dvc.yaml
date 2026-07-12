@@ -1,0 +1,73 @@
+stages:
+  prepare:
+    cmd: python -m churn.data
+    deps:
+      - data/raw/Telco_customer_churn.xlsx
+      - src/churn/data.py
+      - src/churn/config.py
+    params:
+      - data
+    outs:
+      - data/interim/telco_clean.parquet
+
+  featurize:
+    cmd: python -m churn.features
+    deps:
+      - data/interim/telco_clean.parquet
+      - src/churn/features.py
+      - src/churn/data.py
+    params:
+      - data
+    outs:
+      - data/processed/train.parquet
+      - data/processed/valid.parquet
+      - data/processed/test.parquet
+
+  baselines:
+    cmd: python -m churn.baselines
+    deps:
+      - data/processed/train.parquet
+      - data/processed/valid.parquet
+      - src/churn/baselines.py
+      - src/churn/economics.py
+      - config/economics.yaml
+    outs:
+      - reports/baselines.json:
+          cache: false
+      - reports/baselines.md:
+          cache: false
+
+  train:
+    cmd: python -m churn.train
+    deps:
+      - data/processed/train.parquet
+      - data/processed/valid.parquet
+      - src/churn/train.py
+      - src/churn/features.py
+      - src/churn/economics.py
+      - config/economics.yaml
+    params:
+      - train
+    outs:
+      - models/model.joblib
+      - models/model_uncalibrated.joblib
+      - models/metadata.json:
+          cache: false
+
+  evaluate:
+    cmd: python -m churn.evaluate
+    deps:
+      - models/model.joblib
+      - models/model_uncalibrated.joblib
+      - data/processed/valid.parquet
+      - src/churn/evaluate.py
+      - src/churn/economics.py
+      - config/economics.yaml
+    metrics:
+      - reports/metrics_valid.json:
+          cache: false
+    outs:
+      - reports/figures/calibration_valid.png:
+          cache: false
+      - reports/figures/profit_vs_threshold_valid.png:
+          cache: false

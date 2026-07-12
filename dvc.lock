@@ -1,0 +1,192 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python -m churn.data
+    deps:
+    - path: data/raw/Telco_customer_churn.xlsx
+      hash: md5
+      md5: 8534d3efea2a52104cba8605fef6a7df
+      size: 1368250
+    - path: src/churn/config.py
+      hash: md5
+      md5: 347d5a62ef45116ffbee505a0ee085cf
+      size: 1693
+    - path: src/churn/data.py
+      hash: md5
+      md5: aff312d0ea42f3d12d873f2b21ce888f
+      size: 3935
+    params:
+      params.yaml:
+        data:
+          raw_path: data/raw/Telco_customer_churn.xlsx
+          interim_path: data/interim/telco_clean.parquet
+          processed_dir: data/processed
+          valid_size: 0.2
+          test_size: 0.2
+          random_state: 42
+    outs:
+    - path: data/interim/telco_clean.parquet
+      hash: md5
+      md5: 59fde661e7f7553ca613305ed628932c
+      size: 102524
+  featurize:
+    cmd: python -m churn.features
+    deps:
+    - path: data/interim/telco_clean.parquet
+      hash: md5
+      md5: 59fde661e7f7553ca613305ed628932c
+      size: 102524
+    - path: src/churn/data.py
+      hash: md5
+      md5: aff312d0ea42f3d12d873f2b21ce888f
+      size: 3935
+    - path: src/churn/features.py
+      hash: md5
+      md5: c59d13575d7db2e72decb19414b7f87a
+      size: 4861
+    params:
+      params.yaml:
+        data:
+          raw_path: data/raw/Telco_customer_churn.xlsx
+          interim_path: data/interim/telco_clean.parquet
+          processed_dir: data/processed
+          valid_size: 0.2
+          test_size: 0.2
+          random_state: 42
+    outs:
+    - path: data/processed/test.parquet
+      hash: md5
+      md5: 1c5466d77a01ee55f0c6edbd465ee40f
+      size: 67566
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: 63e88752bb885379a577436440be1b09
+      size: 157378
+    - path: data/processed/valid.parquet
+      hash: md5
+      md5: db120b12e3c66e8b90fe61b81e75d4e6
+      size: 67760
+  baselines:
+    cmd: python -m churn.baselines
+    deps:
+    - path: config/economics.yaml
+      hash: md5
+      md5: 87f0244824b140761309f83efc6783f9
+      size: 447
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: 63e88752bb885379a577436440be1b09
+      size: 157378
+    - path: data/processed/valid.parquet
+      hash: md5
+      md5: db120b12e3c66e8b90fe61b81e75d4e6
+      size: 67760
+    - path: src/churn/baselines.py
+      hash: md5
+      md5: c58fae3dbb6d6d2c52eb687f18da273e
+      size: 4441
+    - path: src/churn/economics.py
+      hash: md5
+      md5: 8f94961419ae6e2314cee95db5a9ba15
+      size: 2444
+    outs:
+    - path: reports/baselines.json
+      hash: md5
+      md5: 5ef54800e2f9cb2d59aef641c687b9e0
+      size: 586
+    - path: reports/baselines.md
+      hash: md5
+      md5: 238988483e590fb20ed0e4f343c222c6
+      size: 370
+  train:
+    cmd: python -m churn.train
+    deps:
+    - path: config/economics.yaml
+      hash: md5
+      md5: 87f0244824b140761309f83efc6783f9
+      size: 447
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: 63e88752bb885379a577436440be1b09
+      size: 157378
+    - path: data/processed/valid.parquet
+      hash: md5
+      md5: db120b12e3c66e8b90fe61b81e75d4e6
+      size: 67760
+    - path: src/churn/economics.py
+      hash: md5
+      md5: 8f94961419ae6e2314cee95db5a9ba15
+      size: 2444
+    - path: src/churn/features.py
+      hash: md5
+      md5: c59d13575d7db2e72decb19414b7f87a
+      size: 4861
+    - path: src/churn/train.py
+      hash: md5
+      md5: f9817c3bda7f909db0b8e3c888dd0117
+      size: 10219
+    params:
+      params.yaml:
+        train:
+          model_dir: models
+          optuna_trials: 40
+          cv_folds: 5
+          random_state: 42
+          lightgbm_base:
+            objective: binary
+            n_estimators: 600
+            learning_rate: 0.03
+            verbosity: -1
+    outs:
+    - path: models/metadata.json
+      hash: md5
+      md5: c6e1155b98eb765e4b9f1d28c91c9dea
+      size: 1860
+    - path: models/model.joblib
+      hash: md5
+      md5: c7c3513040956b69038dd2a2f5f92171
+      size: 2628168
+    - path: models/model_uncalibrated.joblib
+      hash: md5
+      md5: f7df7b360d2244d0daabb72d047a0c93
+      size: 527206
+  evaluate:
+    cmd: python -m churn.evaluate
+    deps:
+    - path: config/economics.yaml
+      hash: md5
+      md5: 87f0244824b140761309f83efc6783f9
+      size: 447
+    - path: data/processed/valid.parquet
+      hash: md5
+      md5: db120b12e3c66e8b90fe61b81e75d4e6
+      size: 67760
+    - path: models/model.joblib
+      hash: md5
+      md5: c7c3513040956b69038dd2a2f5f92171
+      size: 2628168
+    - path: models/model_uncalibrated.joblib
+      hash: md5
+      md5: f7df7b360d2244d0daabb72d047a0c93
+      size: 527206
+    - path: src/churn/economics.py
+      hash: md5
+      md5: 8f94961419ae6e2314cee95db5a9ba15
+      size: 2444
+    - path: src/churn/evaluate.py
+      hash: md5
+      md5: af8ac2ccf535908013a9b61aab88fe29
+      size: 6193
+    outs:
+    - path: reports/figures/calibration_valid.png
+      hash: md5
+      md5: 02fae4972ca902e9a71f5a1c2301f730
+      size: 67059
+    - path: reports/figures/profit_vs_threshold_valid.png
+      hash: md5
+      md5: 14bec194bebcee37bf6ee3d74133f28a
+      size: 63379
+    - path: reports/metrics_valid.json
+      hash: md5
+      md5: f66480a8ac81039f46ed69df7fd0058a
+      size: 489

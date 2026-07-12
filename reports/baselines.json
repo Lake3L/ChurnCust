@@ -1,0 +1,30 @@
+[
+  {
+    "name": "call nobody",
+    "pr_auc": null,
+    "roc_auc": null,
+    "n_calls": 0,
+    "profit": 0.0
+  },
+  {
+    "name": "call everyone",
+    "pr_auc": null,
+    "roc_auc": null,
+    "n_calls": 1409,
+    "profit": -848000.0
+  },
+  {
+    "name": "rule: month-to-month & tenure < 6",
+    "pr_auc": null,
+    "roc_auc": null,
+    "n_calls": 242,
+    "profit": -50000.0
+  },
+  {
+    "name": "LogReg on 5 features @ economic threshold",
+    "pr_auc": 0.6399140798089431,
+    "roc_auc": 0.8261269988891473,
+    "n_calls": 83,
+    "profit": 14500.0
+  }
+]
